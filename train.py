@@ -146,6 +146,7 @@ def parse_comma_separated_list(s):
 
 # Custom
 @click.option('--rkimg',        help='Resume kimg', metavar='INT',                              type=click.IntRange(min=0), default=0, show_default=True)
+@click.option('--snap-image',   help='How often to save image snapshots', metavar='TICKS',      type=click.IntRange(min=1), default=50, show_default=True)
 
 # Misc hyperparameters.
 @click.option('--batch-gpu',    help='Limit batch size per GPU', metavar='INT',                 type=click.IntRange(min=1))
@@ -204,7 +205,7 @@ def main(**kwargs):
     c.metrics = opts.metrics
     c.total_kimg = opts.kimg
     c.kimg_per_tick = opts.tick
-    c.image_snapshot_ticks = c.network_snapshot_ticks = opts.snap
+    c.network_snapshot_ticks = opts.snap
     c.random_seed = c.training_set_kwargs.random_seed = opts.seed
     c.data_loader_kwargs.num_workers = opts.workers
 
@@ -319,6 +320,7 @@ def main(**kwargs):
 
     # Custom
     c.resume_kimg = opts.rkimg
+    c.image_snapshot_ticks = opts.snap_image
 
     ##################################
     ##################################
