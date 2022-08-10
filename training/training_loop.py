@@ -8,25 +8,25 @@
 
 """Main training loop."""
 
-import os
-import time
 import copy
 import json
+import os
+import pickle
+import time
+from datetime import datetime, timedelta
+
 import dill
-import psutil
-import PIL.Image
+import dnnlib
+import legacy
 import numpy as np
+import PIL.Image
+import psutil
+import pytz
 import torch
 import torch.nn.functional as F
-import dnnlib
-import pickle
-from torch_utils import misc
-from torch_utils import training_stats
-from torch_utils.ops import conv2d_gradfix
-from torch_utils.ops import grid_sample_gradfix
-
-import legacy
 from metrics import metric_main
+from torch_utils import misc, training_stats
+from torch_utils.ops import conv2d_gradfix, grid_sample_gradfix
 
 #----------------------------------------------------------------------------
 
@@ -71,7 +71,7 @@ def setup_snapshot_image_grid(training_set, random_seed=0, gw=None, gh=None):
 
 #----------------------------------------------------------------------------
 
-def save_image_grid(img, fname, drange, grid_size):
+def save_image_grid(img, fname, drange, grid_size, quality=80):
     lo, hi = drange
     img = np.asarray(img, dtype=np.float32)
     img = (img - lo) * (255 / (hi - lo))
@@ -85,9 +85,9 @@ def save_image_grid(img, fname, drange, grid_size):
 
     assert C in [1, 3]
     if C == 1:
-        PIL.Image.fromarray(img[:, :, 0], 'L').save(fname)
+        PIL.Image.fromarray(img[:, :, 0], 'L').save(fname, quality=quality)
     if C == 3:
-        PIL.Image.fromarray(img, 'RGB').save(fname)
+        PIL.Image.fromarray(img, 'RGB').save(fname, quality=quality)
 
 #----------------------------------------------------------------------------
 
@@ -131,6 +131,7 @@ def training_loop(
     abort_fn                = None,     # Callback function for determining whether to abort training. Must return consistent results across ranks.
     progress_fn             = None,     # Callback function for updating training progress. Called for all ranks.
     restart_every           = -1,       # Time interval in seconds to exit code
+    delete_old_snapshot     = False,
 ):
     # Initialize.
     start_time = time.time()
@@ -261,13 +262,13 @@ def training_loop(
     if rank == 0:
         print('Exporting sample images...')
         grid_size, images, labels = setup_snapshot_image_grid(training_set=training_set)
-        save_image_grid(images, os.path.join(run_dir, 'reals.png'), drange=[0,255], grid_size=grid_size)
+        save_image_grid(images, os.path.join(run_dir, 'reals.jpg'), drange=[0,255], grid_size=grid_size)
 
         grid_z = torch.randn([labels.shape[0], G.z_dim], device=device).split(batch_gpu)
         grid_c = torch.from_numpy(labels).to(device).split(batch_gpu)
         images = torch.cat([G_ema(z=z, c=c, noise_mode='const').cpu() for z, c in zip(grid_z, grid_c)]).numpy()
 
-        save_image_grid(images, os.path.join(run_dir, 'fakes_init.png'), drange=[-1,1], grid_size=grid_size)
+        save_image_grid(images, os.path.join(run_dir, 'fakes_init.jpg'), drange=[-1,1], grid_size=grid_size)
 
     # Initialize logs.
     if rank == 0:
@@ -385,7 +386,11 @@ def training_loop(
 
         # Print status line, accumulating the same information in training_stats.
         tick_end_time = time.time()
+        tick_end_date = datetime.now(pytz.timezone('Asia/Taipei'))
+
         fields = []
+        fields += [f"{tick_end_date.strftime('%Y-%m-%d %H:%M:%S')}"]
+        fields += [f"-> {(tick_end_date + timedelta(seconds=tick_end_time - tick_start_time)).strftime('%Y-%m-%d %H:%M:%S')}\n   "]
         fields += [f"tick {training_stats.report0('Progress/tick', cur_tick):<5d}"]
         fields += [f"kimg {training_stats.report0('Progress/kimg', cur_nimg / 1e3):<8.1f}"]
         fields += [f"time {dnnlib.util.format_time(training_stats.report0('Timing/total_sec', tick_end_time - start_time)):<12s}"]
@@ -424,7 +429,7 @@ def training_loop(
         # Save image snapshot.
         if (rank == 0) and (image_snapshot_ticks is not None) and (done or cur_tick % image_snapshot_ticks == 0):
             images = torch.cat([G_ema(z=z, c=c, noise_mode='const').cpu() for z, c in zip(grid_z, grid_c)]).numpy()
-            save_image_grid(images, os.path.join(run_dir, f'fakes{cur_nimg//1000:06d}.png'), drange=[-1,1], grid_size=grid_size)
+            save_image_grid(images, os.path.join(run_dir, f'fakes{cur_nimg//1000:06d}.jpg'), drange=[-1,1], grid_size=grid_size)
 
         # Save network snapshot.
         snapshot_pkl = None

@@ -144,6 +144,9 @@ def parse_comma_separated_list(s):
 @click.option('--resume',       help='Resume from given network pickle', metavar='[PATH|URL]',  type=str)
 @click.option('--freezed',      help='Freeze first layers of D', metavar='INT',                 type=click.IntRange(min=0), default=0, show_default=True)
 
+# Custom
+@click.option('--rkimg',        help='Resume kimg', metavar='INT',                              type=click.IntRange(min=0), default=0, show_default=True)
+
 # Misc hyperparameters.
 @click.option('--batch-gpu',    help='Limit batch size per GPU', metavar='INT',                 type=click.IntRange(min=1))
 @click.option('--cbase',        help='Capacity multiplier', metavar='INT',                      type=click.IntRange(min=1), default=32768, show_default=True)
@@ -312,6 +315,10 @@ def main(**kwargs):
         c.loss_kwargs.pl_weight = 0.0
         c.loss_kwargs.cls_weight = opts.cls_weight if opts.cond else 0
         c.loss_kwargs.train_head_only = True
+
+
+    # Custom
+    c.resume_kimg = opts.rkimg
 
     ##################################
     ##################################
