@@ -42,7 +42,7 @@ class Args(SimpleNamespace):
 def main(background=False):
     path = Path(__file__).absolute()
     os.chdir(path.parent)
-    os.environ['TORCH_EXTENSIONS_DIR'] = str(path.parent.joinpath('.cached'))
+    os.environ['TORCH_EXTENSIONS_DIR'] = str(path.parent.joinpath('.cache'))
 
     args = Args()
     args.cfg = 'stylegan3-t'

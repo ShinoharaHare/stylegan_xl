@@ -27,4 +27,4 @@ tags
 *.mp4
 *.pyc
 
-.cached/
+.cache/
