@@ -145,7 +145,6 @@ def parse_comma_separated_list(s):
 @click.option('--freezed',      help='Freeze first layers of D', metavar='INT',                 type=click.IntRange(min=0), default=0, show_default=True)
 
 # Custom
-@click.option('--rkimg',        help='Resume kimg', metavar='INT',                              type=click.IntRange(min=0), default=0, show_default=True)
 @click.option('--snap-image',   help='How often to save image snapshots', metavar='TICKS',      type=click.IntRange(min=1), default=50, show_default=True)
 
 # Misc hyperparameters.
@@ -319,7 +318,6 @@ def main(**kwargs):
 
 
     # Custom
-    c.resume_kimg = opts.rkimg
     c.image_snapshot_ticks = opts.snap_image
 
     ##################################
