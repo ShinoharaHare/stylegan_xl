@@ -40,14 +40,15 @@ class Args(SimpleNamespace):
 @click.command()
 @click.argument('background', type=bool, default=False)
 def main(background=False):
+    workspace = os.getcwd()
     path = Path(__file__).absolute()
     os.chdir(path.parent)
     os.environ['TORCH_EXTENSIONS_DIR'] = str(path.parent.joinpath('.cache/torch_extensions'))
 
     args = Args()
     args.cfg = 'stylegan3-t'
-    args.outdir = '../training/16x16'
-    args.data = '../data/v2/16x16.zip'
+    args.outdir = os.path.join(workspace, 'training/16x16')
+    args.data = os.path.join(workspace, 'data/v2/16x16.zip')
     args.workers = 2
     args.gpus = 1
     args.batch = 2048
