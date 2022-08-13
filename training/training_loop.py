@@ -131,7 +131,7 @@ def training_loop(
     abort_fn                = None,     # Callback function for determining whether to abort training. Must return consistent results across ranks.
     progress_fn             = None,     # Callback function for updating training progress. Called for all ranks.
     restart_every           = -1,       # Time interval in seconds to exit code
-    delete_old_snapshot     = False,
+    metric_ticks            = None,
 ):
     # Initialize.
     start_time = time.time()
@@ -475,7 +475,7 @@ def training_loop(
 
         # Evaluate metrics.
         # if (snapshot_data is not None) and (len(metrics) > 0):
-        if cur_tick and (snapshot_data is not None) and (len(metrics) > 0):
+        if cur_tick and (snapshot_data is not None) and (len(metrics) > 0) and (metric_ticks is None or cur_tick % metric_ticks == 0):
             if rank == 0:
                 print('Evaluating metrics...')
             for metric in metrics:

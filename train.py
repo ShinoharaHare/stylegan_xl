@@ -145,7 +145,8 @@ def parse_comma_separated_list(s):
 @click.option('--freezed',      help='Freeze first layers of D', metavar='INT',                 type=click.IntRange(min=0), default=0, show_default=True)
 
 # Custom
-@click.option('--snap-image',   help='How often to save image snapshots', metavar='TICKS',      type=click.IntRange(min=1), default=50, show_default=True)
+@click.option('--snap-img',     help='How often to save image snapshots', metavar='TICKS',      type=click.IntRange(min=1), default=None, show_default=True)
+@click.option('--metric-ticks', help='How often to calc metrics', metavar='TICKS',              type=click.IntRange(min=1), default=None, show_default=True)
 
 # Misc hyperparameters.
 @click.option('--batch-gpu',    help='Limit batch size per GPU', metavar='INT',                 type=click.IntRange(min=1))
@@ -160,7 +161,7 @@ def parse_comma_separated_list(s):
 @click.option('--metrics',      help='Quality metrics', metavar='[NAME|A,B,C|none]',            type=parse_comma_separated_list, default='fid50k_full', show_default=True)
 @click.option('--kimg',         help='Total training duration', metavar='KIMG',                 type=click.IntRange(min=1), default=25000, show_default=True)
 @click.option('--tick',         help='How often to print progress', metavar='KIMG',             type=click.IntRange(min=1), default=4, show_default=True)
-@click.option('--snap',         help='How often to save snapshots', metavar='TICKS',            type=click.IntRange(min=1), default=50, show_default=True)
+@click.option('--snap',         help='How often to save snapshots', metavar='TICKS',            type=click.IntRange(min=1), default=None, show_default=True)
 @click.option('--seed',         help='Random seed', metavar='INT',                              type=click.IntRange(min=0), default=0, show_default=True)
 @click.option('--fp32',         help='Disable mixed-precision', metavar='BOOL',                 type=bool, default=False, show_default=True)
 @click.option('--nobench',      help='Disable cuDNN benchmarking', metavar='BOOL',              type=bool, default=False, show_default=True)
@@ -319,6 +320,7 @@ def main(**kwargs):
 
     # Custom
     c.image_snapshot_ticks = opts.snap_image
+    c.metric_ticks = opts.metric_ticks
 
     ##################################
     ##################################

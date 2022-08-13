@@ -15,12 +15,20 @@ class Args(SimpleNamespace):
         self.__dict__['batch-gpu'] = value
 
     @property
-    def snap_image(self):
-        return self.__dict__['snap-image']
+    def snap_img(self):
+        return self.__dict__['snap-img']
 
-    @snap_image.setter
-    def snap_image(self, value):
-        self.__dict__['snap-image'] = value
+    @snap_img.setter
+    def snap_img(self, value):
+        self.__dict__['snap-img'] = value
+
+    @property
+    def metric_ticks(self):
+        return self.__dict__['metric-ticks']
+
+    @metric_ticks.setter
+    def metric_ticks(self, value):
+        self.__dict__['metric-ticks'] = value
 
     def __setitem__(self, key, value):
         self.__dict__[key] = value
@@ -40,24 +48,25 @@ class Args(SimpleNamespace):
 @click.command()
 @click.argument('background', type=bool, default=False)
 def main(background=False):
-    workspace = os.getcwd()
+    cwd = os.getcwd()
     path = Path(__file__).absolute()
     os.chdir(path.parent)
     os.environ['TORCH_EXTENSIONS_DIR'] = str(path.parent.joinpath('.cache/torch_extensions'))
 
     args = Args()
     args.cfg = 'stylegan3-t'
-    args.outdir = os.path.join(workspace, 'training/16x16')
-    args.data = os.path.join(workspace, 'data/v2/16x16.zip')
-    args.workers = 2
-    args.gpus = 1
+    args.outdir = os.path.join(cwd, 'training')
+    args.data = os.path.join(cwd, 'data/16x16.zip')
+    args.workers = 4
+    args.gpus = 4
     args.batch = 2048
     args.batch_gpu = 8
     args.snap = 1
-    args.snap_image = 10
+    args.snap_img = None
+    args.metric_ticks = 100
     args.kimg = 10000
     args.stem = True
-    args.metrics = 'none' # none fid50k_full
+    args.metrics = 'fid50k_full' # none fid50k_full
 
     os.system(args.build_command(background))
 
