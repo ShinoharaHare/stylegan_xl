@@ -319,7 +319,7 @@ def main(**kwargs):
 
 
     # Custom
-    c.image_snapshot_ticks = opts.snap_image
+    c.image_snapshot_ticks = opts.snap_img
     c.metric_ticks = opts.metric_ticks
 
     ##################################

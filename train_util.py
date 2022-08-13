@@ -38,7 +38,9 @@ class Args(SimpleNamespace):
         cmd += 'nohup' if background else ''
         cmd += ' python train.py'
         for k, v in self.__dict__.items():
-            if type(v) == bool:
+            if v is None:
+                continue 
+            elif type(v) == bool:
                 cmd += f' --{k}' if v else ''
             else:
                 cmd += f' --{k}={v}'
@@ -51,7 +53,8 @@ def main(background=False):
     cwd = os.getcwd()
     path = Path(__file__).absolute()
     os.chdir(path.parent)
-    os.environ['TORCH_EXTENSIONS_DIR'] = str(path.parent.joinpath('.cache/torch_extensions'))
+    os.environ['TORCH_HOME'] = '/workspace/.cache/torch'
+    os.environ['TORCH_EXTENSIONS_DIR'] = '/workspace/.cache/torch_extensions'
 
     args = Args()
     args.cfg = 'stylegan3-t'
@@ -60,7 +63,7 @@ def main(background=False):
     args.workers = 4
     args.gpus = 4
     args.batch = 2048
-    args.batch_gpu = 8
+    args.batch_gpu = 4
     args.snap = 1
     args.snap_img = None
     args.metric_ticks = 100
