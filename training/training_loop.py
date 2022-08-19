@@ -297,7 +297,7 @@ def training_loop(
         torch.distributed.broadcast(__PL_MEAN__, 0)
         torch.distributed.barrier()  # ensure all processes received this info
     cur_nimg = __CUR_NIMG__.item()
-    cur_tick = __CUR_TICK__.item()
+    cur_tick = __CUR_TICK__.item() + 1
     tick_start_nimg = cur_nimg
     tick_start_time = time.time()
     maintenance_time = tick_start_time - start_time
@@ -310,6 +310,14 @@ def training_loop(
     if hasattr(loss, 'pl_mean'):
         loss.pl_mean.copy_(__PL_MEAN__)
     while True:
+        try:
+            with open(os.path.join(run_dir, 'training_options.json')) as f:
+                config = json.load(f)
+                network_snapshot_ticks = config['network_snapshot_ticks']
+                image_snapshot_ticks = config['image_snapshot_ticks']
+                metric_ticks = config['metric_ticks']
+        except:
+            pass
 
         with torch.autograd.profiler.record_function('data_fetch'):
             phase_real_img, phase_real_c = next(training_set_iterator)
