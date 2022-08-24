@@ -96,7 +96,7 @@ def main(background=False):
     args_64x64.path_stem = os.path.join(cwd, 'training/stylegan_xl/00001-stylegan3-t-32x32-gpus1-batch2048/best_model.pkl')
     args_64x64.data = os.path.join(cwd, 'data/v2/top-cropped/64x64.zip')
     args_64x64.batch = 256
-    args_32x32.batch_gpu = 16 # 16G: 8, 40G: 16
+    args_32x32.batch_gpu = 8 # 16G: 8, 40G: 8
     args_32x32.snap_img = 10
     args_32x32.metric_ticks = 100
 
@@ -107,7 +107,7 @@ def main(background=False):
     args_128x128.path_stem = os.path.join(cwd, 'training/stylegan_xl/00002-stylegan3-t-64x64-gpus1-batch256/best_model.pkl')
     args_128x128.data = os.path.join(cwd, 'data/v2/top-cropped/128x128.zip')
     args_128x128.batch = 256
-    args_128x128.batch_gpu = 16 # 16G: 8, 40G: 16
+    args_128x128.batch_gpu = 8 # 16G: 8, 40G: 8
     args_128x128.snap_img = 10
     args_128x128.metric_ticks = 100
 
@@ -118,7 +118,7 @@ def main(background=False):
     args_256x256.path_stem = os.path.join(cwd, 'training/stylegan_xl/00003-stylegan3-t-128x128-gpus1-batch256/best_model.pkl')
     args_256x256.data = os.path.join(cwd, 'data/v2/top-cropped/256x256.zip')
     args_256x256.batch = 256
-    args_256x256.batch_gpu = 16
+    args_256x256.batch_gpu = 8
     args_256x256.snap_img = 10
     args_256x256.metric_ticks = 100
 
@@ -129,7 +129,7 @@ def main(background=False):
     args_512x512.path_stem = os.path.join(cwd, 'training/stylegan_xl/00004-stylegan3-t-256x256-gpus1-batch256/best_model.pkl')
     args_512x512.data = os.path.join(cwd, 'data/v2/top-cropped/512x512.zip')
     args_512x512.batch = 128
-    args_512x512.batch_gpu = 16
+    args_512x512.batch_gpu = 8
     args_512x512.snap_img = 10
     args_512x512.metric_ticks = 100
 
@@ -140,7 +140,7 @@ def main(background=False):
     args_1024x1024.superres = True
     args_1024x1024.up_factor = 2
     args_1024x1024.path_stem = os.path.join(cwd, 'training/stylegan_xl/00005-stylegan3-t-512x512-gpus1-batch128/best_model.pkl')
-    args_1024x1024.batch_gpu = 16
+    args_1024x1024.batch_gpu = 8
     args_1024x1024.snap_img = 10
     args_1024x1024.metric_ticks = 100
 
