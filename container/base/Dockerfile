@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:1.9.1-cuda11.1-cudnn8-devel AS stage-0
+FROM pytorch/pytorch:1.10.0-cuda11.3-cudnn8-devel AS stage-0
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir --no-deps -r requirements.txt
