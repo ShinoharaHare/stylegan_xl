@@ -67,6 +67,7 @@ def main(background=False):
     args_base.workers = 6
     args_base.gpus = 1
     args_base.snap = 1
+    args_base.kimg = 10000
     args_base.metrics = 'fid50k_full' # none fid50k_full
 
     # 16x16
@@ -74,7 +75,7 @@ def main(background=False):
     args_16x16.stem = True
     args_16x16.data = os.path.join(cwd, 'data/v2/top-cropped/16x16.zip')
     args_16x16.batch = 2048
-    args_16x16.batch_gpu = 32 # 16G: 8, 40G: 32
+    args_16x16.batch_gpu = 16 # 16G: 8, 40G: 16
     args_16x16.snap_img = 50
     args_16x16.metric_ticks = 10
 
